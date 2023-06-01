@@ -1,0 +1,32 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+import mplcursors
+
+def plot_bubble_plot(file_path, figsize=(10, 6)):
+    # Load the Excel file into a Pandas DataFrame
+    xls = pd.ExcelFile("C:/Users/priya/OneDrive/Desktop/test data/new dataSAM_NEGATIVE_diff1.xlsx")
+    
+    for sheet_name in xls.sheet_names:
+        # Read the sheet into a DataFrame
+        df = pd.read_excel("C:/Users/priya/OneDrive/Desktop/test data/new dataSAM_NEGATIVE_diff1.xlsx", sheet_name=sheet_name)
+        
+        # Set up the bubble plot
+        fig, ax = plt.subplots(figsize=(10,10))
+        
+        # Plot the bubbles
+        ax.scatter(df['Metabolite name'], df['AREA AVG'], s=100, alpha=0.5)
+        
+        # Set labels and title
+        ax.set_xlabel('Metabolite')
+        ax.set_ylabel('Area')
+        ax.set_title(f'Bubble Plot - {sheet_name}')
+        
+        # Make the plot interactive
+        mplcursors.cursor(hover=True)
+        
+        # Add annotations to the bubbles
+        cursor = mplcursors.cursor(ax.scatter(df['Metabolite'], df['Area'], s=100, alpha=0.5))
+        cursor.connect("add", lambda sel: sel.annotation.set_text(df.iloc[sel.target.index]['Metabolite']))
+        
+        # Display the plot
+        plt.show()
