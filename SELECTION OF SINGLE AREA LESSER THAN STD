@@ -1,0 +1,26 @@
+import pandas as pd
+
+# Function to compare and find the highest value less than the limit
+def find_highest_value(row):
+    values = [float(val.strip('[]')) if val.strip('[]').replace('.', '', 1).isdigit() else val.strip('[]') for val in row['Area'].split(',')]
+    limit = float(row['std'])
+    valid_values = [val for val in values if isinstance(val, float) and val < limit]
+    if valid_values:
+        return max(valid_values)
+    else:
+        return None
+
+# Read the Excel file
+excel_file = pd.ExcelFile("file_path)
+
+# Iterate over each sheet in the Excel file
+for sheet_name in excel_file.sheet_names:
+    # Read the current sheet
+    df = pd.read_excel(excel_file, sheet_name=sheet_name)
+    
+    # Apply the comparison function and create a new column
+    df['Highest Value'] = df.apply(find_highest_value, axis=1)
+    
+    # Save the modified dataframe back to the Excel file
+    with pd.ExcelWriter(file_path_new, mode='a', engine='openpyxl') as writer:
+        df.to_excel(writer, sheet_name=sheet_name, index=False)
