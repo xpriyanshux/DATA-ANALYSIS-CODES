@@ -1,0 +1,22 @@
+import pandas as pd
+import requests
+
+# Read the Excel file with metabolite names
+df = pd.read_excel("C:/Users/priya/OneDrive/Desktop/Metabolite.xlsx")  # Replace 'metabolites.xlsx' with your file name
+
+# Function to search for PubChem ID
+def search_pubchem_id(metabolite_name):
+    url = f"https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/{metabolite_name}/cids/JSON"
+    response = requests.get(url)
+    if response.status_code == 200:
+        data = response.json()
+        if 'IdentifierList' in data:
+            pubchem_id = data['IdentifierList']['CID'][0]
+            return pubchem_id
+    return None
+
+# Add a new column 'PubChem ID' and search for PubChem ID for each metabolite name
+df['PubChem ID'] = df['Metabolite name'].apply(search_pubchem_id)
+
+# Save the updated DataFrame with PubChem IDs to the same Excel file
+df.to_excel("C:/Users/priya/OneDrive/Desktop/Metabolite.xlsx", index=False)
